@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <button type="submit" class="btn btn-default btn-lg float-right"><a href="{{ url_for('index') }}">Back to start page</a></button>
+    <hr />
+    <h3>Your answers:
+      <ol>
+        <li>{{score1}} --> correct answer: {{answers[0]}}</li>
+        <li>{{score2}} --> correct answer: {{answers[1]}}</li>
+        <li>{{score3}} --> correct answer: {{answers[2]}}</li>
+        <li>{{score4}} --> correct answer: {{answers[3]}}</li>
+        <li>{{score5}} --> correct answer: {{answers[4]}}</li>
+        <li>{{score6}} --> correct answer: {{answers[5]}}</li>
+        <li>{{score7}} --> correct answer: {{answers[6]}}</li>
+        <li>{{score8}} --> correct answer: {{answers[7]}}</li>
+        <li>{{score9}} --> correct answer: {{answers[8]}}</li>
+        <li>{{score10}} --> correct answer: {{answers[9]}}</li>
+      </ol>
+    </h3>
+
+    <h1 class="title">Your grade is a {{grade}}, {{total}}/10 correct</h1>
+  </div>
+</div>
+
+{% endblock %}
