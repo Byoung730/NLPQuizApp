@@ -87,7 +87,8 @@ six==1.11.0
 sklearn==0.0
 smart-open==1.7.1
 socketIO-client==0.7.2
-spacy==2.0.16
+spacy>=2.0.16,<2.1.0
+https://github.com/explosion/spacy-models/releases/download/en_vectors_web_lg-2.0.0/en_vectors_web_lg-2.0.0.tar.gz
 spacy-api==0.4.50
 terminado==0.8.1
 testpath==0.4.1
