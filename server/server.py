@@ -4,7 +4,6 @@ import re
 import string
 import uuid
 
-import en_core_web_sm
 import spacy
 from flask import Flask, render_template, request, session
 from jinja2 import Template
