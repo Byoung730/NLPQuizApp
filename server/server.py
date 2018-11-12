@@ -8,7 +8,7 @@ import spacy
 from flask import Flask, render_template, request, session
 from jinja2 import Template
 
-vectors = spacy.load('en_vectors_web_sm')
+vectors = spacy.load('en_vectors_web_lg')
 
 origDoc = '''WHEN I WROTE the following pages, or rather the bulk of them, I lived alone, in the woods, a mile from any neighbor, in a house which I had built myself, on the shore of Walden Pond, in Concord, Massachusetts, and earned my living by the labor of my hands only. I lived there two years and two months. At present I am a sojourner in civilized life again.  I should not obtrude my affairs so much on the notice of my readers if very particular inquiries had not been made by my townsmen concerning my mode of life, which some would call impertinent, though they do not appear to me at all impertinent, but, considering the circumstances, very natural and pertinent. Some have asked what I got to eat; if I did not feel lonesome; if I was not afraid; and the like. Others have been curious to learn what portion of my income I devoted to charitable purposes; and some, who have large families, how many poor children I maintained. I will therefore ask those of my readers who feel no particular interest in me to pardon me if I undertake to answer some of these questions in this book. In most books, the I, or first person, is omitted; in this it will be retained; that, in respect to egotism, is the main difference. We commonly do not remember that it is, after all, always the first person that is speaking. I should not talk so much about myself if there were anybody else whom I knew as well. Unfortunately, I am confined to this theme by the narrowness of my experience. Moreover, I, on my side, require of every writer, first or last, a simple and sincere account of his own life, and not merely what he has heard of other men's lives; some such account as he would send to his kindred from a distant land; for if he has lived sincerely, it must have been in a distant land to me. Perhaps these pages are more particularly addressed to poor students. As for the rest of my readers, they will accept such portions as apply to them. I trust that none will stretch the seams in putting on the coat, for it may do good service to him whom it fits.'''
 
@@ -31,14 +31,15 @@ correctAnswers = []
 def quiz():
     try:
         def closeWords(word):
-            words = [w for w in word.vocab if w.is_lower
-                     == word.is_lower and w.prob >= -15]
+            words = [w for w in word.vocab if w.is_lower ==
+                     word.is_lower and w.prob >= -15]
             close = sorted(
                 words, key=lambda w: word.similarity(w), reverse=True)
             # TODO: filter out words under 5 letters
             return close[:4]
 
-        sentences = (request.form['input']).split('.')
+        sentences1 = (request.form['input']).split('.')
+        sentences = list(set(sentences1))
         noPunct = str.maketrans({}.fromkeys(string.punctuation))
         sentenceArray = []
 
@@ -58,34 +59,36 @@ def quiz():
 
         for sentence in sentenceArray:
             s_array = sentence.split(' ')
-            s_array2 = list(filter(lambda x: x != '', s_array))
-            # print("s_array2: ", s_array2)
-            if i < len(sentenceArray) - 3:
-                if len(sentenceArray) > 3:
-                    x = s_array2[len(s_array2) - 2]
-                    correctAnswers.append(x)
-                    s_array2.pop(len(s_array2) - 2)
-                    # TODO: case-insensitive matching
-                    questionsArray.append(
-                        (sentences[i].lower()).replace(' ' + x.lower(), ' ' + '__________'))
-                    answers = [w.lower_ for w in closeWords(
-                        vectors.vocab[x])]
-                    if x in answers:
-                        answersArray.append(my_shuffle(answers))
-                    else:
-                        del answers[1]
-                        answers.append(x)
-                        answersArray.append(my_shuffle(answers))
+            if s_array:
+                s_array2 = list(filter(lambda x: x != '', s_array))
+                print(s_array2)
+                if i < len(sentenceArray) - 3:
+                    if len(sentenceArray) > 3:
+                        x = s_array2[len(s_array2) - 2]
+                        if x.isalpha():
+                            correctAnswers.append(x)
+                            s_array2.pop(len(s_array2) - 2)
+                            questionsArray.append(
+                                (sentences[i].lower()).replace(' ' + x.lower(), ' ' + '__________'))
+                            answers = [w.lower_ for w in closeWords(
+                                vectors.vocab[x])]
+                            if x in answers:
+                                answersArray.append(
+                                    my_shuffle(answers))
+                            else:
+                                del answers[1]
+                                answers.append(x)
+                                answersArray.append(
+                                    my_shuffle(answers))
             i += 1
 
         session['answers'] = correctAnswers
-        print("correctAnswers1", correctAnswers)
 
         return render_template("quiz.html", data=request.form['input'], data2=questionsArray[0], data3=answersArray[0], data4=questionsArray[1], data5=answersArray[1], data6=questionsArray[2], data7=answersArray[2], data8=questionsArray[3], data9=answersArray[3], data10=questionsArray[4], data11=answersArray[4], data12=questionsArray[5], data13=answersArray[5], data14=questionsArray[6], data15=answersArray[6], data16=questionsArray[7], data17=answersArray[7], data18=questionsArray[8], data19=answersArray[8], data20=questionsArray[9], data21=answersArray[9], answers=correctAnswers)
     except Exception as e:
         if (str(e)) == 'list index out of range':
-            return 'Document is too short to create quiz -- try a longer one'
-        return(str(e))
+            return 'Either the document is too short to create a quiz, or the sentences in the document are too short to create questions -- try another please'
+        return str(e)
 
 
 @app.route("/grade", methods=['GET', 'POST'])
@@ -140,7 +143,7 @@ def grade():
     except Exception as e:
         if (str(e)) == '400 Bad Request: The browser (or proxy) sent a request that this server could not understand.':
             return "Please answer all questions, even if you're not sure about the answer"
-        return(str(e))
+        return str(e)
 
 
 if __name__ == "__main__":
