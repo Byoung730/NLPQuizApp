@@ -31,8 +31,8 @@ correctAnswers = []
 def quiz():
     try:
         def closeWords(word):
-            words = [w for w in word.vocab if w.is_lower ==
-                     word.is_lower and w.prob >= -15]
+            words = [w for w in word.vocab if w.is_lower
+                     == word.is_lower and w.prob >= -15]
             close = sorted(
                 words, key=lambda w: word.similarity(w), reverse=True)
             # TODO: filter out words under 5 letters
@@ -62,24 +62,25 @@ def quiz():
             if s_array:
                 s_array2 = list(filter(lambda x: x != '', s_array))
                 print(s_array2)
-                if i < len(sentenceArray) - 3:
-                    if len(sentenceArray) > 3:
-                        x = s_array2[len(s_array2) - 2]
-                        if x.isalpha():
-                            correctAnswers.append(x)
-                            s_array2.pop(len(s_array2) - 2)
-                            questionsArray.append(
-                                (sentences[i].lower()).replace(' ' + x.lower(), ' ' + '__________'))
-                            answers = [w.lower_ for w in closeWords(
-                                vectors.vocab[x])]
-                            if x in answers:
-                                answersArray.append(
-                                    my_shuffle(answers))
-                            else:
-                                del answers[1]
-                                answers.append(x)
-                                answersArray.append(
-                                    my_shuffle(answers))
+                if s_array2:
+                    if i < len(sentenceArray) - 3:
+                        if len(sentenceArray) > 3:
+                            x = s_array2[len(s_array2) - 2]
+                            if x.isalpha():
+                                correctAnswers.append(x)
+                                s_array2.pop(len(s_array2) - 2)
+                                questionsArray.append(
+                                    (sentences[i].lower()).replace(' ' + x.lower(), ' ' + '__________'))
+                                answers = [w.lower_ for w in closeWords(
+                                    vectors.vocab[x])]
+                                if x in answers:
+                                    answersArray.append(
+                                        my_shuffle(answers))
+                                else:
+                                    del answers[1]
+                                    answers.append(x)
+                                    answersArray.append(
+                                        my_shuffle(answers))
             i += 1
 
         session['answers'] = correctAnswers
