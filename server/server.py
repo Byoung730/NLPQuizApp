@@ -61,7 +61,6 @@ def quiz():
             s_array = sentence.split(' ')
             if s_array:
                 s_array2 = list(filter(lambda x: x != '', s_array))
-                print(s_array2)
                 if s_array2:
                     if i < len(sentenceArray) - 3:
                         if len(sentenceArray) > 3:
@@ -143,7 +142,7 @@ def grade():
         return render_template("grade.html", score1=request.form["1"], score2=request.form["2"], score3=request.form["3"], score4=request.form["4"], score5=request.form["5"], score6=request.form["6"], score7=request.form["7"], score8=request.form["8"], score9=request.form["9"], score10=request.form["10"], answers=answers, total=y, grade=final)
     except Exception as e:
         if (str(e)) == '400 Bad Request: The browser (or proxy) sent a request that this server could not understand.':
-            return "Please answer all questions, even if you're not sure about the answer"
+            return "Please respond to all questions, even if you're not sure about the answer"
         return str(e)
 
 
